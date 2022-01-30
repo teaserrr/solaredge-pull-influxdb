@@ -1,18 +1,32 @@
 # solaredge-pull-influxdb
 A script to pull historic data from the SolarEdge API into an InfluxDB instance
 
+This script can pull either power data, or lifetime energy data.
+
+#### Power
+These are actual power readings in Watts (W) for 15 minute intervals.\
+The SolarEdge API limits the time range for this request to 1 month max. Any time range larger than this will result in an error.
+
+#### Lifetime Energy
+These are cumulative lifetime energy readings in Watt-hours (Wh) for a specified time interval.
+The possible intervals are 15 minutes, hour, day or week. \
+The SolarEdge API limits the time range for this request to 1 month max for intervals smaller than a day, or 1 year for daily or weekly intervals. Any time range larger than this will result in an error.
+
+The SolarEdge API does not provide historic lifetime energy data, only energy data accumulated over the specified time interval.
+Since most tools using the SolarEdge API (e.g. the [Home Assistant SolarEdge integration](https://www.home-assistant.io/integrations/solaredge/)) retrieve accumulated *lifetime* energy instead of *current* values, this script also stores lifetime energy. This is achieved by making an extra API call to determine the lifetime energy value at the begin of the specified time frame. The retrieved current values are then added to this starting value and stored. 
+
 ## Dependencies
 - solaredge
 - influxdb
 
 ## Usage
-1. edit secrets.py with your own solaredge api key and site id, and optionally your influxdb credentials
-2. edit seindb.py:
-  - change `SE_TIMEZONE` and `IDB_TIMEZONE` to the proper timezones (see comments)
-  - change InfluxDB settings: `IDB_HOST`, `IDB_PORT`, `IDB_DATABASE`
-  - change the InfluxDB measurement names for power and energy: `CURRENT_POWER_MEASUREMENT`, `LIFETIME_ENERGY_MEASUREMENT`
-  - change the tags to store with the measurements: `CURRENT_POWER_TAGS`, `LIFETIME_ENERGY_TAGS`
-  - if needed, change the name of the fields where the value is stored: `CURRENT_POWER_FIELD`, `LIFETIME_ENERGY_FIELD`
+1. edit `secrets.py` with your own solaredge api key and site id, and optionally your influxdb credentials
+2. edit `seindb.py`:
+    - change `SE_TIMEZONE` and `IDB_TIMEZONE` to the proper timezones (see comments in the file)
+    - change InfluxDB settings: `IDB_HOST`, `IDB_PORT`, `IDB_DATABASE`
+    - change the InfluxDB measurement names for power and energy: `CURRENT_POWER_MEASUREMENT`, `LIFETIME_ENERGY_MEASUREMENT`
+    - change the tags to store with the measurements: `CURRENT_POWER_TAGS`, `LIFETIME_ENERGY_TAGS`
+    - if needed, change the name of the fields where the value is stored: `CURRENT_POWER_FIELD`, `LIFETIME_ENERGY_FIELD`
 3. run the script. Use the -h switch for help.
 
 Notes:

@@ -10,8 +10,10 @@ from datetime import datetime, timedelta
 from influxdb import InfluxDBClient
 from solaredge import Solaredge
 
-# solaredge constants
-SE_TIMEZONE = pytz.timezone("CET")  # solaredge data is in the local time zone
+# update this to your local timezone
+# solaredge timestamps are in the time zone of the site
+SE_TIMEZONE = pytz.timezone("CET")
+
 SE_FMT_DATE = '%Y-%m-%d'
 SE_FMT_DATETIME = '%Y-%m-%d %H:%M:%S'
 
@@ -21,21 +23,28 @@ IDB_PORT = 8086
 IDB_DATABASE = "test"
 # IDB_DATABASE = "home_assistant"
 
+# this is the timezone used to store the data in InfluxDB. UTC is usually a good choice.
 IDB_TIMEZONE = pytz.utc
 IDB_FMT = '%Y-%m-%dT%H:%M:%SZ'
 
+# measurement name for storing the power data
 CURRENT_POWER_MEASUREMENT = "sensor__power"
+# tags for storing with the power data
 CURRENT_POWER_TAGS = {
     "entity_id": "solaredge_current_power",
     "domain": "sensor"
 }
+# field name to use for the power data values
 CURRENT_POWER_FIELD = "value"
 
+# measurement name for storing the lifetime energy data
 LIFETIME_ENERGY_MEASUREMENT = "sensor__energy"
+# tags for storing with the lifetime energy data
 LIFETIME_ENERGY_TAGS = {
     "entity_id": "solaredge_lifetime_energy",
     "domain": "sensor"
 }
+# field name to use for the lifetime energy data values
 LIFETIME_ENERGY_FIELD = "value"
 
 
